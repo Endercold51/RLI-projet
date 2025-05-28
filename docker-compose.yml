@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+
+# Langage de script pour le dev WEB
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-container-rli
+    volumes:
+      - ./RLI:/var/www/html
+    ports:
+      - "127.0.0.1:80:80"
+    depends_on:
+      - mysql
+
+# Base de données mysql
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container-rli
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ma_base_de_données
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+# langage permettant de communiquer avec la BDD et les récupérer (quand je vois les users dans phpmyadmin c'est que je communique avec la BDD qui les stocks)
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-container-rli
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+
+volumes:
+  mysql_data:
+
+  # image : créer un genre d'iso a partir d'une image présente dans un repository (nécéssite internet pour le recupe sur le net )
